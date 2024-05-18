@@ -26,6 +26,41 @@ const TenantSchema = new mongoose.Schema({
     required: true,
     default: 'localhost'
   }],
+  theme: {
+    primary_color: {
+      type: String,
+      required: false,
+    },
+    secondary_color: {
+      type: String,
+      required: false
+
+    },
+    background_color: {
+      type: String,
+      required: false
+    },
+    text_color: {
+      type: String,
+      required: false
+    },
+    link_color: {
+      type: String,
+      required: false
+    },
+    button_color: {
+      type: String,
+      required: false
+    },
+    button_text_color: {
+      type: String,
+      required: false
+    }, 
+  },
+  modules_enabled: [{
+    type: String,
+    required: false
+  }]
 
 }, { timestamps: true });
 

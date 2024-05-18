@@ -10,3 +10,9 @@ export interface CreateTenantRequest {
 export interface CreateTenantResponse {
   msg: string
 }
+
+export interface ListTenantsResponse {
+  tenants: any[]
+  totalPages?: number
+  currentPage?: number
+}
