@@ -6,13 +6,16 @@ import {
   CreateTenantRequest,
   CreateTenantResponse,
   ListTenantsResponse,
+  Tenant,
 } from "../schemas/schemas.ts";
 
 
 export class TenantsController {
   public async createTenant(createTenantRequest: CreateTenantRequest): Promise<CreateTenantResponse> {
+    console.log("createTenantRequest", createTenantRequest);
+  
     try {
-      await tenantModel.create(createTenantRequest)
+      await tenantModel.create(createTenantRequest.Tenant)
     } catch (error) {
       throw new Error("@TenantsController: Error when trying to save the registry", error);
     }
@@ -33,7 +36,7 @@ export class TenantsController {
       //   return JSON.parse(tenantsCache) as ListTenantsResponse;
       // }
 
-      const listTenants = await tenantModel.find({})
+      const listTenants= await tenantModel.find({})
         .limit(limit * 1)
         .skip((page - 1) * limit)
         .sort({ createAt: -1 });
@@ -41,7 +44,7 @@ export class TenantsController {
       const count = await tenantModel.countDocuments();
 
       const response: ListTenantsResponse = {
-        tenants: listTenants,
+        tenants: listTenants as Tenant[],
         totalPages: Math.ceil(count / limit),
         currentPage: page,
       };

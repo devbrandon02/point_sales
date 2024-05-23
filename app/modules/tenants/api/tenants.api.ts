@@ -1,32 +1,39 @@
 import { Context } from "https://deno.land/x/oak@14.2.0/mod.ts";
 import { CreateTenantRequest, CreateTenantResponse, ListTenantsResponse } from "../schemas/schemas.ts";
-import { BODY_TYPES } from "https://deno.land/x/oak@14.2.0/util.ts";
 import { Status } from "jsr:@oak/commons@0.7/status";
 import { TenantsController } from "../controllers/tenants.controllers.ts";
-import { Redis } from "https://deno.land/x/redis@v0.27.0/mod.ts";
-import tenantModel from "../models/tenants.model.ts";
+
 
 export const CreateTenantApi = async (ctx: Context)  => {
   const { 
-    name, 
-    email, 
-    phone, 
-    logo, 
-    domain, 
-    point_of_sale 
+    tenant
   } = await ctx.request.body.json()
-  if(!name || !email || !phone || !logo || !domain || !point_of_sale){
+  if(!tenant.name || !tenant.email || !tenant.phone || !tenant.logo || !tenant.domain || !tenant.point_of_sale){
     ctx.response.status = Status.BadRequest
     return ctx.response.body = {error: "@CreateTenantApi: Some mandatory values ​​are missing"}
-  } 
+  }
+
+  const { name, email, phone, logo, domain, point_of_sale, modules_enabled } = tenant
 
   const CREATE_TENANT_REQUEST: CreateTenantRequest = {
-    name,
-    email,
-    logo,
-    phone,
-    point_of_sale,
-    domain: domain
+    Tenant: {
+      name,
+      email,
+      phone,
+      logo,
+      domain,
+      point_of_sale,
+      modules_enabled: modules_enabled || [],
+      theme: {
+        primary_color: "#000000",
+        secondary_color: "#000000",
+        background_color: "#000000",
+        text_color: "#000000",
+        link_color: "#000000",
+        button_color: "#000000",
+        button_text_color: "#000000"
+      }
+    }
   }
 
   try {
@@ -59,6 +66,8 @@ export const ListTenantsApi = async (ctx: Context) => {
     }
     
   } catch (error) {
+    console.log("@ListTenantsApi: Unexpected error in controller", error);
+  
     ctx.response.status = Status.InternalServerError
     return ctx.response.body = {error: "@ListTenantsApi: Unexpected error in controller" + error}
   }
